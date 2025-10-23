@@ -1,4 +1,4 @@
-package com.lilstiffy.mockgps.ui.components
+﻿package com.lilstiffy.mockgps.ui.components
 
 import android.location.Address
 import androidx.compose.foundation.background
@@ -38,12 +38,18 @@ import com.lilstiffy.mockgps.service.VibratorService
 import com.lilstiffy.mockgps.ui.theme.ButtonGreen
 import com.lilstiffy.mockgps.ui.theme.ButtonRed
 import com.lilstiffy.mockgps.ui.theme.Gold
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
+private val ROUTE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
 @Composable
 fun FooterComponent(
     modifier: Modifier = Modifier,
     address: Address?,
     latLng: LatLng,
+    label: String?,
+    timestamp: LocalDateTime?,
     isMocking: Boolean,
     isFavorite: Boolean = false,
     onStart: () -> Unit,
@@ -60,7 +66,6 @@ fun FooterComponent(
             modifier = Modifier
                 .padding(16.dp)
         ) {
-            // Location section
             Row {
                 Icon(
                     modifier = Modifier
@@ -84,9 +89,18 @@ fun FooterComponent(
                 )
             }
 
+            if (!label.isNullOrBlank() || timestamp != null) {
+                Spacer(modifier = Modifier.height(4.dp))
+                val timeDisplay = timestamp?.format(ROUTE_TIME_FORMAT) ?: "--"
+                Text(
+                    text = "Label: \nTimestamp: ",
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+
             Spacer(modifier = Modifier.height(4.dp))
 
-            // Coordinates section
             Row {
                 Icon(
                     modifier = Modifier
@@ -110,12 +124,9 @@ fun FooterComponent(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Button row
             Row(
                 modifier = Modifier.fillMaxWidth()
             ) {
-
-                // Favorite button.
                 IconButton(
                     modifier = Modifier
                         .width(32.dp)
@@ -141,7 +152,6 @@ fun FooterComponent(
 
                 Spacer(modifier = Modifier.width(16.dp))
 
-                // Toggle mocking button
                 IconToggleButton(
                     modifier = Modifier
                         .height(48.dp)

@@ -1,4 +1,4 @@
-package com.lilstiffy.mockgps
+﻿package com.lilstiffy.mockgps
 
 import android.content.ComponentName
 import android.content.Context
@@ -8,13 +8,7 @@ import android.os.Bundle
 import android.os.IBinder
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.WindowCompat
 import com.lilstiffy.mockgps.service.LocationHelper
 import com.lilstiffy.mockgps.service.MockLocationService
@@ -66,42 +60,24 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        setContentView(R.layout.activity_main)
 
-        setContent {
+        findViewById<ComposeView>(R.id.compose_view).setContent {
             MockGpsTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    MapScreen(activity = this)
-                }
+                MapScreen(activity = this@MainActivity)
             }
         }
 
-        // Start the service
         val serviceIntent = Intent(this, MockLocationService::class.java)
         startService(serviceIntent)
-
-        // Bind to the service
         bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-
-        // Unbind from the service
         if (isBound) {
             unbindService(connection)
             isBound = false
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MockGpsTheme {
     }
 }
